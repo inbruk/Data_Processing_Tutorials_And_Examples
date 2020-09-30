@@ -1,7 +1,6 @@
 def get_median(lst):
     lst.sort()
     lst_len = len(lst)
-
     if lst_len % 2 == 0:
         pos2 = int(lst_len / 2)
         pos1 = pos2 - 1
@@ -10,8 +9,6 @@ def get_median(lst):
         pos1 = int(lst_len / 2)
         return lst[pos1]
 
-result = get_median([5, 2, 1, 3, 4])
-print(result)
 
-result = get_median([3, 3, 7, 9])
-print(result)
+print(get_median([5, 2, 1, 3, 4]))
+print(get_median([3, 3, 7, 9]))
