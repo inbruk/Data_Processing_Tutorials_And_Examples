@@ -70,8 +70,22 @@ display(age_club_vk)
 
 print('-------------------------------------------------------')
 
-club = df[(age.Nationality == 'Argentina')]
+club = df[(df.Nationality == 'Argentina')]
 club_age = club['Age'].value_counts(bins=4)
 display(club_age)
 
 print('-------------------------------------------------------')
+
+spain = df[df.Nationality == 'Spain']
+spain_age = spain[spain.Age == 21]
+display(round(len(spain_age)*100/len(spain),2))
+
+print('-------------------------------------------------------')
+
+grouped_df = df.groupby(['Position'])['Wage'].sum().reset_index()
+filtered_df = grouped_df[ grouped_df.Wage > 5000000 ]
+display( filtered_df )
+
+
+
+
