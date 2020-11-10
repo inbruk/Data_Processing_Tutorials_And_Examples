@@ -86,6 +86,81 @@ grouped_df = df.groupby(['Position'])['Wage'].sum().reset_index()
 filtered_df = grouped_df[ grouped_df.Wage > 5000000 ]
 display( filtered_df )
 
+print('-------------------------------------------------------')
 
+pwv = df.groupby(['Position'])[['Wage','Value']].mean()
+pwv_sort = pwv.sort_values(by=['Value'],ascending=False)
+display(pwv_sort)
 
+print('-------------------------------------------------------')
+
+wage_m = df.groupby(['Club'])['Wage'].agg(['mean','median']).reset_index()
+wage_me = wage_m[(wage_m['mean']==wage_m['median'])]
+display(wage_me)
+display(len(wage_me))
+
+print('-------------------------------------------------------')
+
+wage_me_max = wage_me['mean'].max()
+display(wage_me_max)
+
+print('-------------------------------------------------------')
+
+chels = df[(df.Club=='Chelsea')]
+chels_sum = chels['Wage'].sum()
+display(chels_sum)
+
+print('-------------------------------------------------------')
+
+arg = df[(df.Nationality=='Argentina') & (df.Age==30)]
+arg_min = arg['Wage'].min()
+display(arg_min)
+
+print('-------------------------------------------------------')
+
+club = df[(df.Nationality=='Argentina') & (df.Club=='FC Barcelona')]
+str_max = club['Strength'].max()
+bal_max = club['Balance'].max()
+display(str_max)
+display(bal_max)
+
+print('-------------------------------------------------------')
+
+df2 = df.pivot_table(columns = 'Position', index = 'Club', values = 'Wage', aggfunc = 'max')
+display(df2.loc['Manchester City']['GK'])
+
+print('-------------------------------------------------------')
+
+df3 = df.pivot_table(columns = 'Position', index = 'Club', values = 'Wage', aggfunc = 'count', fill_value=0)
+display(round(df3['GK'].mean(),3))
+
+df4 = df3['CM'].reset_index()
+display( df4[(df4.CM==0)])
+
+print('-------------------------------------------------------')
+
+df5 = df[(df.Nationality=='Russia') & (df.Club=='AS Monaco')]
+display(df5['Wage'])
+
+print('-------------------------------------------------------')
+
+df3 = df.pivot_table(columns = 'Position', index = 'Club', values = 'SprintSpeed', aggfunc = 'mean', fill_value=0, margins=True)
+display(df3)
+
+df4 = df3.loc['All'].reset_index()
+df5 = df4[(df4.Position=='RB') | (df4.Position=='LM') | (df4.Position=='RM') | (df4.Position=='CF') | (df4.Position=='RWM') | (df4.Position=='RS')]
+display(df5)
+
+df6 = df5.sort_values('All')
+display(df6)
+
+print('-------------------------------------------------------')
+
+df3 = df.pivot_table(columns = 'Position', index = 'Club', values = 'SprintSpeed', aggfunc = 'mean', fill_value=0, margins=True)
+display(df3)
+
+df4 = df3['ST'].reset_index().sort_values('ST', ascending=False).head(3)
+display(df4)
+
+print('-------------------------------------------------------')
 
