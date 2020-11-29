@@ -20,6 +20,26 @@ plt.show()
 
 print('-------------------------------------------------------')
 
+sns.countplot(x = 'day', data = df)
+plt.show()
+
+print('-------------------------------------------------------')
+
+sns.barplot(x = 'sex', y = 'total_bill', data = df)
+plt.show()
+
+print('-------------------------------------------------------')
+
+sns.boxplot(x = 'day', y = 'tip', data = df, hue = 'smoker')
+plt.show()
+
+print('-------------------------------------------------------')
+
+correlation = df.corr()
+sns.heatmap( correlation, annot=True, cmap='coolwarm' )
+plt.show()
+
+print('-------------------------------------------------------')
 
 
 
