@@ -122,6 +122,7 @@ print('-------------------------------------------------------')
 
 display(log2)
 
+
 def get_time_of_the_day(dt):
     if 0 <= dt.hour <= 5:
         return 'ночь'
@@ -137,15 +138,15 @@ log2['time'] = log2['time'].apply(get_time_of_the_day)
 vc = log2['time'].value_counts()
 display(vc)
 
-print('-------------------------------------------------------')
+print('------------------------------------------------------- !')
 
-log = pd.read_csv("log.csv")
-
+log = pd.read_csv("log.csv", header=None)
 log.columns = ['user_id', 'time', 'bet', 'win']
 log = log.dropna(subset=['time'],axis=0)
 log['time'] = log['time'].apply(lambda x: x[1:])
 log['time'] = pd.to_datetime(log['time'])
 log['hour'] = log['time'].dt.hour
+log = log.dropna()
 display(log)
 
 
