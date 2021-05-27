@@ -258,6 +258,7 @@ users = pd.read_csv('users.csv', delimiter='\t', encoding='koi8_r')
 log.columns = ['user_id', 'time', 'bet', 'win']
 users.columns = ['user_id', 'email', 'geo']
 
+log.user_id.dropna()
 
 def prepare_user_id(s):
     arr_str = s.split(' - ')
@@ -273,7 +274,8 @@ def prepare_user_id(s):
 
 log['user_id'] = log.user_id.apply( prepare_user_id )
 res_df = pd.merge(log, users, on='user_id')
-sample2 = res_df[res_df.bet > 0.0].groupby(['geo','user_id']).bet.count()
+#sample2 = res_df[res_df.bet > 0.0].groupby(['geo']).bet.count()
+sample2 = res_df.groupby('geo').user_id.count()
 
 display(sample2)
 
