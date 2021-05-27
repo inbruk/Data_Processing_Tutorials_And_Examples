@@ -200,20 +200,84 @@ print('-------------------------------------------------------')
 res = res_df.groupby('user_id').net.sum().median()
 display(res)
 
-print('6.5.2.2 -------------------------------------------------------')
+print('B6.5.2.2 -------------------------------------------------------')
 
 users_with_bets = res_df[res_df.bet > 0].user_id.drop_duplicates()
 ures_df = pd.merge(log, users_with_bets, on='user_id')
 display(ures_df)
 ures_grouped = ures_df[res_df.bet == 0.0].groupby('user_id').bet.count()
-display(ures_grouped)
 display(ures_grouped.median())
 
-print('6.5.2.3 -------------------------------------------------------')
+print('B6.5.2.3 -------------------------------------------------------')
 
-# print('-------------------------------------------------------')
-# res = res_df.groupby('geo').win.sum().sort_values()
-# display(res)
+
+def prepare_time(st):
+    res_f = st.replace('[', '')
+    return res_f
+
+
+res_df.time = res_df.time.dropna()
+res_df.time = res_df.time.apply(prepare_time)
+res_df['time'] = pd.to_datetime(res_df['time'], format='%Y-%m-%d %H:%M:%S')
+# display(res_df)
+
+res_bet0_min = res_df[res_df.bet == 0.0].groupby('user_id').time.min()
+res_betp_min = res_df[res_df.bet > 0.0].groupby('user_id').time.min()
+res_bet_df = pd.merge(res_bet0_min, res_betp_min, on='user_id')
+# display(res_bet_df)
+
+res_bet_df['time_d'] = res_bet_df['time_y'] - res_bet_df['time_x']
+# display(res_bet_df)
+
+display(res_bet_df.time_d.mean())
+
+print('B6.5.3.1 ------------------------------------------------')
+res = res_df.groupby('geo').win.sum().sort_values()
+display(res)
+
+print('B6.5.3.2 ------------------------------------------------')
+res = res_df[res_df.bet > 0.0]
+display(res)
+
+res = res.groupby('geo').bet.mean()
+display(res)
+
+max_mean_bet = res.max()
+display(max_mean_bet)
+
+min_mean_bet = res.min()
+display(min_mean_bet)
+
+display(max_mean_bet/min_mean_bet)
+
+print('B6.5.3.3 ------------------------------------------------')
+
+log = pd.read_csv("log.csv", header=None)
+users = pd.read_csv('users.csv', delimiter='\t', encoding='koi8_r')
+
+log.columns = ['user_id', 'time', 'bet', 'win']
+users.columns = ['user_id', 'email', 'geo']
+
+
+def prepare_user_id(s):
+    arr_str = s.split(' - ')
+    if len(arr_str)>1:
+        res_str = arr_str[1]
+        list_str = list(res_str)
+        list_str[0] = 'U'
+        res_str = "".join(list_str)
+        return res_str
+    else:
+        return ''
+
+
+log['user_id'] = log.user_id.apply( prepare_user_id )
+res_df = pd.merge(log, users, on='user_id')
+sample2 = res_df[res_df.bet > 0.0].groupby(['geo','user_id']).bet.count()
+
+display(sample2)
+
+
 
 
 
