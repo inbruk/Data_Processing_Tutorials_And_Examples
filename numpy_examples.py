@@ -234,13 +234,36 @@ print(res)
 
 print(' ------------------------------------------------')
 
-bigdata = np.array()
+bigdata = np.array([])
 for x in range(100, 1001):
-    if x % 2 == 0:
-        bigdata = np.append([x])
+    if x % 2 == 1:
+        bigdata = np.append(bigdata,[x*x])
 print(bigdata)
 
 print('B7.4.1.7 ------------------------------------------------')
 
 res = np.median(bigdata)
+print(res)
+
+print('B7.4.1.8 ------------------------------------------------')
+
+res = np.std(bigdata)
+print(round(res, 0))
+
+print('B7.4.1.9 ------------------------------------------------')
+
+res = np.std(bigdata)
+print(round(res, 0))
+
+print('B7.4.1.10 ------------------------------------------------')
+
+res_arr7 = np.array([])
+res_arr8 = np.array([])
+for i, x in enumerate(bigdata, start=1):
+    if i % 2 == 0:
+        res_arr7 = np.append(res_arr7, [x])
+    else:
+        res_arr8 = np.append(res_arr8, [x])
+
+res = np.corrcoef(res_arr7, res_arr8)
 print(res)
