@@ -64,12 +64,34 @@ def wiki_header(url):
     return result
 
 
-print(wiki_header('https://en.wikipedia.org/wiki/Operating_system'))
+# print(wiki_header('https://en.wikipedia.org/wiki/Operating_system'))
+# print(page.find('div', class_='body').text)
+
+links = page.find_all('a')
+# print(len(links))
+# for link in links:
+#    print(link.text)
 
 
+all_blocks = page.find_all('div', class_='container')
+# print(all_blocks)
+first_block = all_blocks[0]
+links = first_block.find_all('a')
+# print([link.text for link in links[:10]])
 
 
+def get_actors(url):
+    response = requests.get(url)
+    page = BeautifulSoup(response.text, 'html.parser')
+    containers = page.find_all('ul', class_='styles_list__I97eu')
+
+    result = []
+    for curr_c in containers:
+        actors = curr_c.find_all('a')
+        for curr_a in actors:
+            result.append(curr_a.text)
+
+    return result
 
 
-
-
+print(get_actors('https://www.kinopoisk.ru/film/326/'))
