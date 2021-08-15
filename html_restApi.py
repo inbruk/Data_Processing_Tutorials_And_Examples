@@ -203,7 +203,25 @@ def get_smm_index(group_name, token):
     }
     response = requests.get(url, params=params)
     data = response.json()
-    print(data)
+    items = data['response']['items']
+#    pprint(items)
+    lst = list(map(lambda r: r['comments']['count'] + r['likes']['count'] + r['reposts']['count'], items))
+    lst_sum = sum(lst)
+    # print(lst_sum)
+
+    url = 'https://api.vk.com/method/groups.getMembers'
+    params = {
+        'group_id': 'vk',
+        'v': 5.95,
+        'access_token': token
+    }
+    response = requests.get(url, params=params)
+    data = response.json()
+    cnt = data['response']['count']
+    # print(cnt)
+
+    res = lst_sum / cnt
+    return res
 
 
-get_smm_index('', token)
+print(get_smm_index('', token))
