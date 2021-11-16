@@ -15,48 +15,68 @@ import re
 
 revenue_data = pd.read_csv("revenue_data.csv", sep='\t', decimal=',')
 pprint(revenue_data)
-pprint('------------------------------------------------------------------------------------')
 
+pprint('------------------------------------------------------------------------------------')
 
 token = 'AQAAAABXjzIIAAdSVYTRaTUWbUtzlhqF3lZc5uM'
 headers = {'Authorization': 'OAuth ' + token}
 params = {'metrics': 'ym:s:users',
-          'dimensions': 'ym:s:deviceCategory,ym:s:mobilePhone,ym:s:mobilePhoneModel',
+          'dimensions': 'ym:s:date,ym:s:deviceCategory,ym:s:mobilePhone,ym:s:mobilePhoneModel',
           'date1': '2019-05-01',
           'date2': '2019-05-31',
-          'ids': 30177909}
+          'ids': 30177909,
+          'offset': 1,
+          'limit': 500
+          }
 
 response = requests.get('https://api-metrika.yandex.net/stat/v1/data', params=params, headers=headers)
 # print(response.status_code)
 
 metrika_data = response.json()
 pprint(metrika_data)
+
 print('------------------------------------------------------------------------------------')
 
+data = metrika_data['data']
+data_lst = list(map(lambda x:
+                    {
+                        'date': x['dimensions'][0]['name'],
+                        'deviceCategory': x['dimensions'][1]['name'],
+                        'mobilePhone': x['dimensions'][2]['name'],
+                        'mobilePhoneModel': x['dimensions'][3]['name'],
+                        'usersCount': x['metrics'][0]
+                    },
+                    data))
+# pprint(data_lst)
+resp_df = pd.DataFrame(data_lst)
+pprint(resp_df)
 
-df = pd.DataFrame(columns=['deviceCategory', 'mobilePhone', 'mobilePhoneModel', 'usersCount'])
-#pprint(df)
+# print('------------------------------------------------------------------------------------')
+#
+# rev_sum = revenue_data['revenue'].sum()
+# pprint(round(rev_sum))
 
-# lst = metrika_data['data']
-# pprint(lst)
-
-curr_item = metrika_data['data'][0]
-pprint(curr_item)
 print('------------------------------------------------------------------------------------')
 
-curr_dims = curr_item['dimensions']
-curr_deviceCategory = curr_dims[0]['name']
-curr_mobilePhone = curr_dims[1]['name']
-curr_mobilePhoneModel = curr_dims[2]['name']
-pprint(str(curr_deviceCategory) + ' ' + str(curr_mobilePhone) + ' ' + str(curr_mobilePhoneModel))
+resp_df = resp_df.fillna('None')
+pprint(resp_df)
+
 print('------------------------------------------------------------------------------------')
 
-curr_met = curr_item['metrics']
-curr_usr_count = curr_met[0]
-pprint(str(curr_usr_count))
+resp_df = resp_df.groupby(['deviceCategory', 'mobilePhone', 'mobilePhoneModel']).sum()
+pprint(resp_df.count())
+resp_df = resp_df[resp_df.usersCount >= 3.0]
+pprint(resp_df.count())
+
 print('------------------------------------------------------------------------------------')
 
-# res_lst = list(filter(lambda x: 'Python' in x['dimensions'][0]['name'], metrika_data))
-# pprint(res_lst)
+res_df = pd.merge(revenue_data, resp_df, on=['deviceCategory', 'mobilePhone', 'mobilePhoneModel'])
+pprint(res_df)
 
+print('------------------------------------------------------------------------------------')
+
+res_df['ARPU'] = round(res_df.revenue / res_df.usersCount, 2)
+res_df = res_df[res_df.usersCount >= 3.0]
+res_df = res_df.sort_values(by=['ARPU'], ascending=False)
+pprint(res_df)
 
